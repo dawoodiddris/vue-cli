@@ -6,7 +6,7 @@ const sortObject = require('./util/sortObject')
 const writeFileTree = require('./util/writeFileTree')
 const inferRootOptions = require('./util/inferRootOptions')
 const normalizeFilePaths = require('./util/normalizeFilePaths')
-const { runTransformation } = require('vue-codemod')
+const runCodemod = require('./util/runCodemod')
 const {
   semver,
 
@@ -277,9 +277,9 @@ module.exports = class Generator {
       let imports = this.imports[file]
       imports = imports instanceof Set ? Array.from(imports) : imports
       if (imports && imports.length > 0) {
-        files[file] = runTransformation(
-          { path: file, source: files[file] },
+        files[file] = runCodemod(
           require('./util/codemods/injectImports'),
+          { path: file, source: files[file] },
           { imports }
         )
       }
@@ -287,9 +287,9 @@ module.exports = class Generator {
       let injections = this.rootOptions[file]
       injections = injections instanceof Set ? Array.from(injections) : injections
       if (injections && injections.length > 0) {
-        files[file] = runTransformation(
-          { path: file, source: files[file] },
+        files[file] = runCodemod(
           require('./util/codemods/injectOptions'),
+          { path: file, source: files[file] },
           { injections }
         )
       }
